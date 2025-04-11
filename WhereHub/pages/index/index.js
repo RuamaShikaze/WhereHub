@@ -1,66 +1,67 @@
-// Pages/index/index.js
+// pages/navigation/navigation.js
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
-
+    floorMap: {
+      image: '/assets/maps/f1.png',
+      width: 800,  // 图片实际像素宽度
+      height: 600,
+      scale: 0.5    // 1像素=0.5厘米
+    },
+    path: {
+      nodes: [],
+      pixels: []    // [[x1,y1], [x2,y2]...]
+    }
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad(options) {
-
+  // 加载地图数据
+  loadFloorMap(floorId) {
+    wx.request({
+      url: `https://your-api.com/api/floors/${floorId}`,
+      success: ({ data }) => {
+        this.setData({
+          'floorMap.image': data.imageUrl,
+          'floorMap.scale': data.scale,
+          pois: data.pois
+        });
+      }
+    });
   },
 
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {
-
+  // 计算路径
+  calculatePath() {
+    wx.request({
+      url: 'https://your-api.com/api/path/indoor',
+      method: 'POST',
+      data: {
+        start: 'A101',
+        end: 'B203',
+        floor_id: 1
+      },
+      success: ({ data }) => {
+        this.setData({
+          'path.nodes': data.path,
+          'path.pixels': data.coordinates
+        });
+        this.drawPath();
+      }
+    });
   },
 
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow() {
+  // 在canvas上绘制路径
+  drawPath() {
+    const ctx = wx.createCanvasContext('mapCanvas');
+    const pixels = this.data.path.pixels;
 
-  },
+    ctx.setStrokeStyle('#FF0000');
+    ctx.setLineWidth(4);
+    ctx.beginPath();
+    ctx.moveTo(pixels[0][0], pixels[0][1]);
+    
+    for (let i = 1; i < pixels.length; i++) {
+      ctx.lineTo(pixels[i][0], pixels[i][1]);
+    }
 
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload() {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh() {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom() {
-
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage() {
-
+    ctx.stroke();
+    ctx.draw();
   }
-})
+});

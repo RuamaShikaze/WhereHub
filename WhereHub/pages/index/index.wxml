@@ -1,2 +1,30 @@
-<!--Pages/index/index.wxml-->
-<text>Pages/index/index.wxml</text>
+<!-- 自定义地图容器 -->
+<view class="map-container">
+  <!-- 背景地图图片 -->
+  <image src="{{floorMap.image}}" mode="widthFix" style="width: 100%;"/>
+  
+  <!-- 覆盖层canvas -->
+  <canvas 
+    id="mapCanvas" 
+    canvas-id="mapCanvas"
+    style="width: {{floorMap.width}}px; height: {{floorMap.height}}px; position: absolute; top: 0; left: 0;"
+  ></canvas>
+  
+  <!-- POI标记 -->
+  <block wx:for="{{pois}}" wx:key="poi_id">
+    <view 
+      class="poi-marker" 
+      style="left: {{item.x}}px; top: {{item.y}}px;"
+      bindtap="onPoiTap"
+      data-poi="{{item}}"
+    >
+      {{item.node_name}}
+    </view>
+  </block>
+</view>
+
+<!-- 路径信息展示 -->
+<view wx:if="{{path.nodes.length > 0}}">
+  <text>路径：{{path.nodes.join(' → ')}}</text>
+  <text>距离：{{path.distance}}cm</text>
+</view>
