@@ -2,7 +2,7 @@
 Page({
   data: {
     floorMap: {
-      image: '/assets/maps/f1.png',
+      image: '../../assets/maps/f1.png',
       width: 800,  // 图片实际像素宽度
       height: 600,
       scale: 0.5    // 1像素=0.5厘米
@@ -16,7 +16,7 @@ Page({
   // 加载地图数据
   loadFloorMap(floorId) {
     wx.request({
-      url: `https://your-api.com/api/floors/${floorId}`,
+      url: `https://10.122.241.21:3000/api/floors/${floorId}`,
       success: ({ data }) => {
         this.setData({
           'floorMap.image': data.imageUrl,
@@ -30,7 +30,7 @@ Page({
   // 计算路径
   calculatePath() {
     wx.request({
-      url: 'https://your-api.com/api/path/indoor',
+      url: 'https://10.122.241.21:3000/api/path/pathfinding',
       method: 'POST',
       data: {
         start: 'A101',
